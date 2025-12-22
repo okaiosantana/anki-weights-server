@@ -35,3 +35,7 @@ def set_weights():
         save(data)
 
     return {"ok": True}
+
+@app.get("/debug/all")
+def debug_all():
+    return load()
