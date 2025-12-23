@@ -25,7 +25,15 @@ def get_weights(note_id):
 
 @app.post("/weights")
 def set_weights():
-    payload = request.get_json()
+    payload = request.get_json(silent=True)
+
+    # 🔁 Fallback for sendBeacon (text/plain)
+    if payload is None:
+        try:
+            payload = json.loads(request.data.decode("utf-8"))
+        except Exception:
+            return {"error": "Invalid payload"}, 400
+
     note_id = str(payload["noteId"])
     weights = payload["weights"]
 
@@ -35,6 +43,7 @@ def set_weights():
         save(data)
 
     return {"ok": True}
+
 
 @app.get("/debug/all")
 def debug_all():
